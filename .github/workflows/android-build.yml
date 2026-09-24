@@ -4,9 +4,6 @@ on:
   push:
     branches:
       - main
-  pull_request:
-    branches:
-      - main
   workflow_dispatch:
 
 permissions:
@@ -33,24 +30,28 @@ jobs:
         with:
           gradle-version: "8.11.1"
 
-      - name: Verify required project files
+      - name: Show Gradle version
+        run: gradle --version
+
+      - name: Verify project structure
         shell: bash
         run: |
           set -e
 
-          echo "Checking Android project..."
+          echo "Checking PunctuOwlity project structure..."
 
           test -f settings.gradle
           test -f build.gradle
           test -f gradle.properties
           test -f app/build.gradle
           test -f app/src/main/AndroidManifest.xml
+
           test -d app/src/main/java
           test -d app/src/main/res
           test -d app/src/main/res/layout
           test -d app/src/main/res/values
 
-          echo "Required project files are present."
+          echo "Project structure check passed."
 
       - name: Check Android resources
         shell: bash
@@ -68,13 +69,10 @@ jobs:
             exit 1
           fi
 
-          echo "Android resources look valid."
+          echo "Android resource check passed."
 
       - name: Validate Android project
         run: python3 scripts/validate_android_project.py
-
-      - name: Show Gradle version
-        run: gradle --version
 
       - name: Run unit tests
         run: gradle testDebugUnitTest --stacktrace
@@ -82,7 +80,7 @@ jobs:
       - name: Build debug APK
         run: gradle assembleDebug --stacktrace
 
-      - name: Verify APK
+      - name: Verify APK was created
         shell: bash
         run: |
           set -e
@@ -90,7 +88,7 @@ jobs:
           APK="app/build/outputs/apk/debug/app-debug.apk"
 
           if [ ! -f "$APK" ]; then
-            echo "APK was not created:"
+            echo "APK was not created at:"
             echo "$APK"
             exit 1
           fi
@@ -100,14 +98,71 @@ jobs:
             exit 1
           fi
 
-          echo "PunctuOwlity APK successfully created:"
+          echo "APK successfully created:"
           ls -lh "$APK"
 
-      - name: Upload PunctuOwlity APK
+      - name: Locate Android build tools
+        id: buildtools
+        shell: bash
+        run: |
+          set -e
+
+          BUILD_TOOLS="$(ls -1 "$ANDROID_HOME/build-tools" | sort -V | tail -1)"
+          echo "path=$ANDROID_HOME/build-tools/$BUILD_TOOLS" >> "$GITHUB_OUTPUT"
+
+      - name: Verify APK signature
+        shell: bash
+        run: |
+          "${{ steps.buildtools.outputs.path }}/apksigner" verify \
+            --verbose \
+            --print-certs \
+            app/build/outputs/apk/debug/app-debug.apk
+
+      - name: Inspect APK package information
+        shell: bash
+        run: |
+          "${{ steps.buildtools.outputs.path }}/aapt" dump badging \
+            app/build/outputs/apk/debug/app-debug.apk | tee apk-info.txt
+
+      - name: Create APK checksum
+        shell: bash
+        run: |
+          sha256sum app/build/outputs/apk/debug/app-debug.apk \
+            | tee apk-sha256.txt
+
+      - name: Create build report
+        if: always()
+        shell: bash
+        run: |
+          {
+            echo "PunctuOwlity APK Build Report"
+            echo "============================"
+            echo
+            echo "GitHub commit:"
+            echo "$GITHUB_SHA"
+            echo
+            echo "APK:"
+            ls -lh app/build/outputs/apk/debug/app-debug.apk 2>/dev/null \
+              || echo "APK was not produced."
+            echo
+            echo "SHA-256:"
+            cat apk-sha256.txt 2>/dev/null \
+              || echo "Checksum was not produced."
+            echo
+            echo "Package information:"
+            cat apk-info.txt 2>/dev/null \
+              || echo "Package information was not produced."
+          } > apk-build-report.txt
+
+      - name: Upload verified APK
         uses: actions/upload-artifact@v4
         with:
-          name: PunctuOwlity-debug-apk
-          path: app/build/outputs/apk/debug/app-debug.apk
+          name: PunctuOwlity-verified-debug-apk
+          path: |
+            app/build/outputs/apk/debug/app-debug.apk
+            apk-build-report.txt
+            apk-info.txt
+            apk-sha256.txt
           if-no-files-found: error
           retention-days: 30
 
