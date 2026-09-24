@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/punctuowlity_light_blue">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <ImageButton
+            android:id="@+id/button_back"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/go_back"
+            android:src="@drawable/ic_arrow_back" />
+
+        <ImageView
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_gravity="center_horizontal"
+            android:contentDescription="@string/app_name"
+            android:src="@drawable/punctuowlity_logo" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="18dp"
+            android:fontFamily="@font/cormorant_upright_bold"
+            android:text="@string/create_account"
+            android:textAlignment="center"
+            android:textColor="@color/punctuowlity_navy"
+            android:textSize="34sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <EditText android:id="@+id/edit_first_name" android:layout_width="0dp" android:layout_height="56dp" android:layout_weight="1" android:background="@android:color/white" android:hint="@string/first_name" android:padding="12dp" />
+            <Space android:layout_width="12dp" android:layout_height="1dp" />
+            <EditText android:id="@+id/edit_last_name" android:layout_width="0dp" android:layout_height="56dp" android:layout_weight="1" android:background="@android:color/white" android:hint="@string/last_name" android:padding="12dp" />
+        </LinearLayout>
+
+        <EditText android:id="@+id/edit_email" android:layout_width="match_parent" android:layout_height="56dp" android:layout_marginTop="12dp" android:background="@android:color/white" android:hint="@string/email_address" android:inputType="textEmailAddress" android:padding="12dp" />
+        <EditText android:id="@+id/edit_phone" android:layout_width="match_parent" android:layout_height="56dp" android:layout_marginTop="12dp" android:background="@android:color/white" android:hint="@string/phone_optional" android:inputType="phone" android:padding="12dp" />
+        <EditText android:id="@+id/edit_username" android:layout_width="match_parent" android:layout_height="56dp" android:layout_marginTop="12dp" android:background="@android:color/white" android:hint="@string/username" android:padding="12dp" />
+        <EditText android:id="@+id/edit_password" android:layout_width="match_parent" android:layout_height="56dp" android:layout_marginTop="12dp" android:background="@android:color/white" android:hint="@string/password" android:inputType="textPassword" android:padding="12dp" />
+        <EditText android:id="@+id/edit_confirm_password" android:layout_width="match_parent" android:layout_height="56dp" android:layout_marginTop="12dp" android:background="@android:color/white" android:hint="@string/confirm_password" android:inputType="textPassword" android:padding="12dp" />
+
+        <Button android:id="@+id/button_create_account" android:layout_width="match_parent" android:layout_height="56dp" android:layout_marginTop="18dp" android:backgroundTint="@color/punctuowlity_teal" android:text="@string/sign_up" android:textColor="@color/punctuowlity_navy" />
+        <Button android:id="@+id/button_login" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="center_horizontal" android:backgroundTint="@android:color/transparent" android:text="Login" android:textColor="@color/punctuowlity_navy" />
+    </LinearLayout>
+</ScrollView>

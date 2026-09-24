@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/punctuowlity_light_blue">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/top_bar"
+        android:layout_width="0dp"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/punctuowlity_coral"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageButton
+        android:id="@+id/button_back"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="@android:color/transparent"
+        android:contentDescription="@string/go_back"
+        android:src="@drawable/ic_arrow_back"
+        app:layout_constraintBottom_toBottomOf="@id/top_bar"
+        app:layout_constraintStart_toStartOf="@id/top_bar"
+        app:layout_constraintTop_toTopOf="@id/top_bar" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:padding="32dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/top_bar">
+
+        <ImageView android:layout_width="170dp" android:layout_height="170dp" android:contentDescription="@string/app_name" android:src="@drawable/punctuowlity_logo" />
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="24dp" android:text="@string/sms_prompt" android:textAlignment="center" android:textColor="@color/punctuowlity_navy" android:textSize="22sp" />
+        <Button android:id="@+id/button_allow" android:layout_width="wrap_content" android:layout_height="56dp" android:layout_marginTop="28dp" android:backgroundTint="@color/punctuowlity_teal" android:text="@string/allow_sms" android:textColor="@color/punctuowlity_navy" />
+        <Button android:id="@+id/button_deny" android:layout_width="wrap_content" android:layout_height="56dp" android:layout_marginTop="18dp" android:backgroundTint="@color/punctuowlity_coral" android:text="@string/no_thanks" android:textColor="@color/punctuowlity_navy" />
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
