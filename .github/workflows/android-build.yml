@@ -1,14 +1,22 @@
-name: Build and Verify PunctuOwlity APK
+name: PunctuOwlity Android Build
 
 on:
-  workflow_dispatch:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
-  build:
+  validate-test-build:
+    name: Validate, Test, and Build APK
     runs-on: ubuntu-latest
+    timeout-minutes: 20
 
     steps:
       - name: Check out repository
@@ -19,73 +27,103 @@ jobs:
         with:
           distribution: temurin
           java-version: "17"
+          cache: gradle
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
-        with:
-          gradle-version: "8.11.1"
+
+      - name: Make Gradle wrapper executable
+        run: chmod +x ./gradlew
+
+      - name: Verify required project files
+        shell: bash
+        run: |
+          set -e
+
+          echo "Checking required Android project files..."
+
+          test -f settings.gradle
+          test -f build.gradle
+          test -f gradle.properties
+          test -f gradlew
+          test -f gradle/wrapper/gradle-wrapper.properties
+          test -f gradle/wrapper/gradle-wrapper.jar
+
+          test -f app/build.gradle
+          test -f app/src/main/AndroidManifest.xml
+
+          test -d app/src/main/java
+          test -d app/src/main/res
+          test -d app/src/main/res/layout
+          test -d app/src/main/res/values
+
+          echo "Required project files are present."
+
+      - name: Check Android resources for invalid placeholder files
+        shell: bash
+        run: |
+          set -e
+
+          echo "Checking Android resource directories..."
+
+          INVALID_FILES="$(find app/src/main/res \
+            -type f \
+            \( -name '.gitkeep' -o -name 'git.keep' \) \
+            -print)"
+
+          if [ -n "$INVALID_FILES" ]; then
+            echo "Invalid placeholder files were found under app/src/main/res:"
+            echo "$INVALID_FILES"
+            exit 1
+          fi
+
+          echo "No invalid Android resource placeholders found."
+
+      - name: Validate Android project
+        run: python3 scripts/validate_android_project.py
+
+      - name: Run unit tests
+        run: ./gradlew testDebugUnitTest --stacktrace
 
       - name: Build debug APK
-        run: gradle assembleDebug
+        run: ./gradlew assembleDebug --stacktrace
 
-      - name: Locate Android build tools
-        id: buildtools
+      - name: Verify APK was created
         shell: bash
         run: |
-          BUILD_TOOLS="$(ls -1 "$ANDROID_HOME/build-tools" | sort -V | tail -1)"
-          echo "path=$ANDROID_HOME/build-tools/$BUILD_TOOLS" >> "$GITHUB_OUTPUT"
+          set -e
 
-      - name: Verify APK signature
-        shell: bash
-        run: |
-          "${{ steps.buildtools.outputs.path }}/apksigner" verify \
-            --verbose \
-            --print-certs \
-            app/build/outputs/apk/debug/app-debug.apk
+          APK="app/build/outputs/apk/debug/app-debug.apk"
 
-      - name: Inspect APK package information
-        shell: bash
-        run: |
-          "${{ steps.buildtools.outputs.path }}/aapt" dump badging \
-            app/build/outputs/apk/debug/app-debug.apk | tee apk-info.txt
+          if [ ! -f "$APK" ]; then
+            echo "APK was not created at the expected location:"
+            echo "$APK"
+            exit 1
+          fi
 
-      - name: Create APK checksum
-        shell: bash
-        run: |
-          sha256sum app/build/outputs/apk/debug/app-debug.apk \
-            | tee apk-sha256.txt
+          if [ ! -s "$APK" ]; then
+            echo "APK exists but is empty."
+            exit 1
+          fi
 
-      - name: Create readable diagnostic report
-        if: always()
-        shell: bash
-        run: |
-          {
-            echo "PunctuOwlity APK Build Report"
-            echo "============================"
-            echo
-            echo "GitHub commit:"
-            echo "$GITHUB_SHA"
-            echo
-            echo "APK:"
-            ls -lh app/build/outputs/apk/debug/app-debug.apk 2>/dev/null \
-              || echo "APK was not produced."
-            echo
-            echo "SHA-256:"
-            cat apk-sha256.txt 2>/dev/null \
-              || echo "Checksum was not produced."
-            echo
-            echo "Package information:"
-            cat apk-info.txt 2>/dev/null \
-              || echo "Package information was not produced."
-          } > apk-build-report.txt
+          echo "APK successfully created:"
+          ls -lh "$APK"
 
-      - name: Upload verified APK
+      - name: Upload PunctuOwlity debug APK
         uses: actions/upload-artifact@v4
         with:
-          name: PunctuOwlity-verified-debug-apk
-          path: |
-            app/build/outputs/apk/debug/app-debug.apk
-            apk-build-report.txt
-            apk-info.txt
-            apk-sha256.txt
+          name: PunctuOwlity-debug-apk
+          path: app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
+          retention-days: 30
+
+      - name: Upload unit test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: PunctuOwlity-test-reports
+          path: |
+            app/build/reports/tests/
+            app/build/test-results/
+          if-no-files-found: ignore
+          retention-days: 14
