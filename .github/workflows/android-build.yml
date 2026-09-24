@@ -1,0 +1,91 @@
+name: Build and Verify PunctuOwlity APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.11.1"
+
+      - name: Build debug APK
+        run: gradle assembleDebug
+
+      - name: Locate Android build tools
+        id: buildtools
+        shell: bash
+        run: |
+          BUILD_TOOLS="$(ls -1 "$ANDROID_HOME/build-tools" | sort -V | tail -1)"
+          echo "path=$ANDROID_HOME/build-tools/$BUILD_TOOLS" >> "$GITHUB_OUTPUT"
+
+      - name: Verify APK signature
+        shell: bash
+        run: |
+          "${{ steps.buildtools.outputs.path }}/apksigner" verify \
+            --verbose \
+            --print-certs \
+            app/build/outputs/apk/debug/app-debug.apk
+
+      - name: Inspect APK package information
+        shell: bash
+        run: |
+          "${{ steps.buildtools.outputs.path }}/aapt" dump badging \
+            app/build/outputs/apk/debug/app-debug.apk | tee apk-info.txt
+
+      - name: Create APK checksum
+        shell: bash
+        run: |
+          sha256sum app/build/outputs/apk/debug/app-debug.apk \
+            | tee apk-sha256.txt
+
+      - name: Create readable diagnostic report
+        if: always()
+        shell: bash
+        run: |
+          {
+            echo "PunctuOwlity APK Build Report"
+            echo "============================"
+            echo
+            echo "GitHub commit:"
+            echo "$GITHUB_SHA"
+            echo
+            echo "APK:"
+            ls -lh app/build/outputs/apk/debug/app-debug.apk 2>/dev/null \
+              || echo "APK was not produced."
+            echo
+            echo "SHA-256:"
+            cat apk-sha256.txt 2>/dev/null \
+              || echo "Checksum was not produced."
+            echo
+            echo "Package information:"
+            cat apk-info.txt 2>/dev/null \
+              || echo "Package information was not produced."
+          } > apk-build-report.txt
+
+      - name: Upload verified APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: PunctuOwlity-verified-debug-apk
+          path: |
+            app/build/outputs/apk/debug/app-debug.apk
+            apk-build-report.txt
+            apk-info.txt
+            apk-sha256.txt
+          if-no-files-found: error
