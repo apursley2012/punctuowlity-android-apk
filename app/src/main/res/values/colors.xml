@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<color name="black">#FF000000</color>
+	<color name="white">#FFFFFFFF</color>
+    <color name="punctuowlity_navy">#000050</color>
+    <color name="punctuowlity_coral">#F1575D</color>
+    <color name="punctuowlity_teal">#33CCCC</color>
+    <color name="punctuowlity_light_blue">#C7D8EA</color>
+    <color name="punctuowlity_events_navy">#000050</color>
+</resources>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">PunctuOwlity</string>
+    <string name="my_account">My Account</string>
+    <string name="my_account_settings">My Account / Settings</string>
+    <string name="log_out">Log out</string>
+    <string name="save_changes">Save Changes</string>
+    <string name="sms_reminders">SMS reminders</string>
+    <string name="first_name">First Name</string>
+    <string name="last_name">Last Name</string>
+    <string name="email_address">Email Address</string>
+    <string name="phone_optional">Phone Number (optional)</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="create_account">Create an Account</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="choose_date">Choose date</string>
+    <string name="choose_time">Choose time</string>
+    <string name="error_required_signup_fields">Complete all required fields</string>
+    <string name="error_required_account_fields">Complete all required account information</string>
+    <string name="error_invalid_email">Enter a valid email address</string>
+    <string name="error_invalid_optional_phone">Enter a valid phone number or leave it blank</string>
+    <string name="error_invalid_phone">Enter a valid phone number</string>
+    <string name="error_passwords_do_not_match">Passwords do not match</string>
+    <string name="error_username_in_use">That username is already in use</string>
+    <string name="account_created">Account created successfully</string>
+    <string name="error_login_required">Username and password are required</string>
+    <string name="error_invalid_login">Invalid username or password</string>
+    <string name="sms_phone_required">Add a phone number in My Account before enabling SMS reminders.</string>
+    <string name="error_account_update">Unable to update account. That username or email may already be used.</string>
+    <string name="account_updated">Account updated</string>
+    <string name="sms_prompt">Thanks for joining PunctuOwlity. Before you continue on to the app, PunctuOwlity would like to send you SMS alerts for upcoming events. Do you want to receive SMS alerts?</string>
+    <string name="allow_sms">Allow SMS Notifications</string>
+    <string name="no_thanks">No, thanks</string>
+    <string name="go_back">Go back</string>
+    <string name="open_menu">Open menu</string>
+</resources>

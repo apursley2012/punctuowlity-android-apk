@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="event_categories_labels">
+        <item>General</item>
+        <item>Birthday</item>
+        <item>Appointment</item>
+        <item>Trip</item>
+    </string-array>
+
+    <string-array name="event_categories_values">
+        <item>general</item>
+        <item>birthday</item>
+        <item>appointment</item>
+        <item>trip</item>
+    </string-array>
+</resources>
