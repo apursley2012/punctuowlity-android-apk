@@ -27,31 +27,24 @@ jobs:
         with:
           distribution: temurin
           java-version: "17"
-          cache: gradle
 
-      - name: Set up Gradle
+      - name: Set up Gradle 8.11.1
         uses: gradle/actions/setup-gradle@v4
-
-      - name: Make Gradle wrapper executable
-        run: chmod +x ./gradlew
+        with:
+          gradle-version: "8.11.1"
 
       - name: Verify required project files
         shell: bash
         run: |
           set -e
 
-          echo "Checking required Android project files..."
+          echo "Checking Android project..."
 
           test -f settings.gradle
           test -f build.gradle
           test -f gradle.properties
-          test -f gradlew
-          test -f gradle/wrapper/gradle-wrapper.properties
-          test -f gradle/wrapper/gradle-wrapper.jar
-
           test -f app/build.gradle
           test -f app/src/main/AndroidManifest.xml
-
           test -d app/src/main/java
           test -d app/src/main/res
           test -d app/src/main/res/layout
@@ -59,12 +52,10 @@ jobs:
 
           echo "Required project files are present."
 
-      - name: Check Android resources for invalid placeholder files
+      - name: Check Android resources
         shell: bash
         run: |
           set -e
-
-          echo "Checking Android resource directories..."
 
           INVALID_FILES="$(find app/src/main/res \
             -type f \
@@ -72,23 +63,26 @@ jobs:
             -print)"
 
           if [ -n "$INVALID_FILES" ]; then
-            echo "Invalid placeholder files were found under app/src/main/res:"
+            echo "Invalid placeholder files found under app/src/main/res:"
             echo "$INVALID_FILES"
             exit 1
           fi
 
-          echo "No invalid Android resource placeholders found."
+          echo "Android resources look valid."
 
       - name: Validate Android project
         run: python3 scripts/validate_android_project.py
 
+      - name: Show Gradle version
+        run: gradle --version
+
       - name: Run unit tests
-        run: ./gradlew testDebugUnitTest --stacktrace
+        run: gradle testDebugUnitTest --stacktrace
 
       - name: Build debug APK
-        run: ./gradlew assembleDebug --stacktrace
+        run: gradle assembleDebug --stacktrace
 
-      - name: Verify APK was created
+      - name: Verify APK
         shell: bash
         run: |
           set -e
@@ -96,7 +90,7 @@ jobs:
           APK="app/build/outputs/apk/debug/app-debug.apk"
 
           if [ ! -f "$APK" ]; then
-            echo "APK was not created at the expected location:"
+            echo "APK was not created:"
             echo "$APK"
             exit 1
           fi
@@ -106,10 +100,10 @@ jobs:
             exit 1
           fi
 
-          echo "APK successfully created:"
+          echo "PunctuOwlity APK successfully created:"
           ls -lh "$APK"
 
-      - name: Upload PunctuOwlity debug APK
+      - name: Upload PunctuOwlity APK
         uses: actions/upload-artifact@v4
         with:
           name: PunctuOwlity-debug-apk
