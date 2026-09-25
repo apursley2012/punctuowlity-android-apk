@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <resources>
     <string name="app_name">PunctuOwlity</string>
     <string name="my_account">My Account</string>
@@ -35,4 +35,20 @@
     <string name="no_thanks">No, thanks</string>
     <string name="go_back">Go back</string>
     <string name="open_menu">Open menu</string>
+    <string name="event_not_found">Event not found</string>
+    <string name="event_fields_required">All fields are required</string>
+    <string name="event_date_time_format_error">Use MM/DD/YYYY for the date and a time such as 1:30 PM</string>
+    <string name="reminder_future_required">Reminder time must be in the future</string>
+    <string name="event_save_failed">Unable to save event</string>
+    <string name="reminder_schedule_failed">Event saved, but the reminder could not be scheduled</string>
+    <string name="event_updated">Event Updated</string>
+    <string name="event_added">Event Added</string>
+    <string name="event_deleted">Event Deleted</string>
+    <string name="event_delete_failed">Unable to delete event</string>
+    <string name="reminder_enabled">Reminder enabled</string>
+    <string name="reminder_disabled">Reminder disabled</string>
+    <string name="edit_event_accessibility">Edit %1$s</string>
+    <string name="delete_event_accessibility">Delete %1$s</string>
+    <string name="sms_reminder_default">You have an event today.</string>
+    <string name="sms_reminder_message">PunctuOwlity reminder: %1$s</string>
 </resources>
