@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='utf-8'?>
+<manifest xmlns:ns0="http://schemas.android.com/apk/res/android">
+    <uses-permission ns0:name="android.permission.SEND_SMS" />
+    <uses-feature ns0:name="android.hardware.telephony" ns0:required="false" />
+    <application ns0:allowBackup="true" ns0:dataExtractionRules="@xml/data_extraction_rules" ns0:fullBackupContent="@xml/backup_rules" ns0:icon="@mipmap/ic_launcher" ns0:label="@string/app_name" ns0:roundIcon="@mipmap/ic_launcher_round" ns0:supportsRtl="true" ns0:theme="@style/Theme.PunctuOwlityEventTracker">
+        <activity ns0:name=".LoginActivity" ns0:exported="true">
+            <intent-filter>
+                <action ns0:name="android.intent.action.MAIN" />
+                <category ns0:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity ns0:name=".SignupActivity" ns0:exported="false" />
+        <activity ns0:name=".SmsPermissionActivity" ns0:exported="false" />
+        <activity ns0:name=".AddEventActivity" ns0:exported="false" ns0:label="Add Event" />
+        <activity ns0:name=".MainActivity" ns0:exported="false" />
+        <receiver ns0:name=".SmsReminderReceiver" ns0:exported="false" />
+        <meta-data ns0:name="preloaded_fonts" ns0:resource="@array/preloaded_fonts" />
+        <activity ns0:name=".AccountActivity" ns0:exported="false" ns0:label="@string/my_account" />
+    </application>
+</manifest>
